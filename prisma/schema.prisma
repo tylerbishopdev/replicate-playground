@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Generation {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Model information
+  modelOwner  String
+  modelName   String
+  modelVersion String?
+
+  // Generation details
+  prompt      String
+  status      GenerationStatus @default(PENDING)
+  replicateId String?          @unique // Replicate prediction ID
+
+  // Results
+  output      Json?            // Store the raw output from Replicate
+  imageUrls   String[]         // Array of generated image URLs
+  blobUrls    String[]         // Array of stored blob URLs
+
+  // Metadata
+  parameters  Json?            // Store all input parameters
+  metadata    Json?            // Additional metadata
+  error       String?          // Error message if failed
+
+  // Performance tracking
+  startedAt   DateTime?
+  completedAt DateTime?
+  duration    Int?             // Duration in milliseconds
+
+  @@map("generations")
+}
+
+enum GenerationStatus {
+  PENDING
+  STARTING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
