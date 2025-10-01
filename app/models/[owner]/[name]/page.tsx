@@ -186,7 +186,7 @@ export default function ModelDetailPage() {
             <div className="flex items-center gap-4">
               <Link
                 href="/"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Home
@@ -209,14 +209,14 @@ export default function ModelDetailPage() {
                     <h1 className="text-2xl font-bold text-foreground">
                       {model.name}
                     </h1>
-                    <p className="text-muted-foreground">
+                    <p className="text-foreground">
                       by {model.owner}
                     </p>
                   </div>
                 </div>
 
                 {model.description && (
-                  <p className="mt-4 text-muted-foreground">
+                  <p className="mt-4 text-foreground">
                     {model.description}
                   </p>
                 )}
@@ -228,7 +228,7 @@ export default function ModelDetailPage() {
                       href={model.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+                      className="flex items-center gap-1 text-foreground hover:text-foreground transition-colors"
                     >
                       <Github className="h-4 w-4" />
                       Code
@@ -240,7 +240,7 @@ export default function ModelDetailPage() {
                       href={model.paper_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+                      className="flex items-center gap-1 text-foreground hover:text-foreground transition-colors"
                     >
                       <FileText className="h-4 w-4" />
                       Paper
@@ -248,7 +248,7 @@ export default function ModelDetailPage() {
                   )}
 
                   {model.run_count && (
-                    <span className="flex items-center gap-1 text-muted-foreground">
+                    <span className="flex items-center gap-1 text-foreground">
                       <Play className="h-4 w-4" />
                       {model.run_count.toLocaleString()} runs
                     </span>
@@ -266,7 +266,7 @@ export default function ModelDetailPage() {
                     'whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium transition-colors',
                     activeTab === 'run'
                       ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                      : 'border-transparent text-foreground hover:text-foreground hover:border-muted'
                   )}
                 >
                   Run Model
@@ -277,7 +277,7 @@ export default function ModelDetailPage() {
                     'whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium transition-colors',
                     activeTab === 'docs'
                       ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                      : 'border-transparent text-foreground hover:text-foreground hover:border-muted'
                   )}
                 >
                   Documentation
@@ -288,7 +288,7 @@ export default function ModelDetailPage() {
                     'whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium transition-colors',
                     activeTab === 'history'
                       ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                      : 'border-transparent text-foreground hover:text-foreground hover:border-muted'
                   )}
                 >
                   History ({generations.length})
@@ -310,7 +310,7 @@ export default function ModelDetailPage() {
                       <CardTitle>Input Parameters</CardTitle>
                       {/* Streaming Toggle */}
                       <div className="flex items-center space-x-2">
-                        <Settings className="h-4 w-4 text-muted-foreground" />
+                        <Settings className="h-4 w-4 text-foreground" />
                         <div className="flex items-center space-x-2">
                           <Checkbox
                             id="streaming"
@@ -332,7 +332,7 @@ export default function ModelDetailPage() {
                         isSubmitting={isSubmitting}
                       />
                     ) : (
-                      <div className="text-center py-8 text-muted-foreground">
+                      <div className="text-center py-8 text-foreground">
                         <AlertCircle className="mx-auto h-8 w-8 mb-2" />
                         No input schema available for this model
                       </div>
@@ -350,14 +350,14 @@ export default function ModelDetailPage() {
                     <div className="space-y-4 text-sm">
                       <div>
                         <dt className="font-medium text-foreground">Version ID</dt>
-                        <dd className="font-mono text-muted-foreground break-all">
+                        <dd className="font-mono text-foreground break-all">
                           {version.id}
                         </dd>
                       </div>
 
                       <div>
                         <dt className="font-medium text-foreground">Created</dt>
-                        <dd className="text-muted-foreground">
+                        <dd className="text-foreground">
                           {new Date(version.created_at).toLocaleDateString()}
                         </dd>
                       </div>
@@ -365,7 +365,7 @@ export default function ModelDetailPage() {
                       {version.cog_version && (
                         <div>
                           <dt className="font-medium text-foreground">Cog Version</dt>
-                          <dd className="text-muted-foreground">
+                          <dd className="text-foreground">
                             {version.cog_version}
                           </dd>
                         </div>
@@ -375,7 +375,7 @@ export default function ModelDetailPage() {
                         <div>
                           <dt className="font-medium text-foreground">OpenAPI Schema</dt>
                           <dd className="mt-2">
-                            <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-64 text-muted-foreground">
+                            <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-64 text-foreground">
                               {JSON.stringify(version.openapi_schema, null, 2)}
                             </pre>
                           </dd>
@@ -393,7 +393,7 @@ export default function ModelDetailPage() {
                   </CardHeader>
                   <CardContent>
                     {generations.length === 0 ? (
-                      <div className="text-center py-8 text-muted-foreground">
+                      <div className="text-center py-8 text-foreground">
                         <AlertCircle className="mx-auto h-8 w-8 mb-2" />
                         <p>No generations yet</p>
                         <p className="text-sm">Run your first prediction to see it here</p>
@@ -418,7 +418,7 @@ export default function ModelDetailPage() {
                                 <p className="text-sm font-medium text-foreground line-clamp-2">
                                   {generation.prompt}
                                 </p>
-                                <p className="text-xs text-muted-foreground mt-1">
+                                <p className="text-xs text-foreground mt-1">
                                   {new Date(generation.createdAt).toLocaleString()}
                                 </p>
                               </div>
@@ -449,7 +449,7 @@ export default function ModelDetailPage() {
                                 ))}
                                 {generation.imageUrls.length > 4 && (
                                   <div className="aspect-square bg-muted rounded flex items-center justify-center">
-                                    <span className="text-sm text-muted-foreground">
+                                    <span className="text-sm text-foreground">
                                       +{generation.imageUrls.length - 4} more
                                     </span>
                                   </div>
@@ -464,7 +464,7 @@ export default function ModelDetailPage() {
                             )}
 
                             {generation.duration && (
-                              <div className="mt-2 text-xs text-muted-foreground">
+                              <div className="mt-2 text-xs text-foreground">
                                 Duration: {(generation.duration / 1000).toFixed(1)}s
                               </div>
                             )}
@@ -488,11 +488,11 @@ export default function ModelDetailPage() {
               ) : (
                 <Card className="text-center py-12">
                   <CardContent>
-                    <Play className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <Play className="mx-auto h-12 w-12 text-foreground mb-4" />
                     <h3 className="text-lg font-medium text-foreground mb-2">
                       Ready to run
                     </h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-foreground">
                       Fill in the parameters and click &quot;Run Prediction&quot; to see the output here.
                     </p>
                   </CardContent>

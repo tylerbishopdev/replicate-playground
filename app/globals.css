@@ -115,6 +115,9 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-diatype: var(--font-diatype);
+  --font-satoshi: var(--font-satoshi);
+  --font-tiposka: var(--font-tiposka);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -178,17 +181,17 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 font-diatype;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-satoshi;
   }
 
   /* Added focus styles for better keyboard navigation accessibility */
   button:focus-visible,
   input:focus-visible,
   [tabindex]:focus-visible {
-    @apply outline-2 outline-ring outline-offset-2;
+    @apply outline-2 outline-ring outline-offset-2 font-tiposka;
   }
 
   /* Ensure proper contrast for interactive elements */
@@ -221,11 +224,13 @@
   /* Smooth scrolling for better mobile experience */
   html {
     scroll-behavior: smooth;
+    font-family: var(--font-diatype);
   }
 
   /* Prevent horizontal overflow on mobile */
   body {
     overflow-x: hidden;
+    font-family: var(--font-diatype);
   }
 
   /* Touch-friendly tap targets */

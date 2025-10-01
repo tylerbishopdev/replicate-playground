@@ -332,8 +332,27 @@ export const DEFAULT_MODELS: ReplicateModel[] = [
   },
   {
     owner: "google",
+    name: "veo-3",
+    description: "Google's flagship Veo 3 text to video model, with audio",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/google/veo-3",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "google",
     name: "veo-3-fast",
-    description: "Google Veo 3 Fast - Quick video generation",
+    description:
+      "A faster and cheaper version of Google's Veo 3 video model, with audio",
     visibility: "public",
     run_count: 0,
     cover_image_url: "",
@@ -341,6 +360,156 @@ export const DEFAULT_MODELS: ReplicateModel[] = [
     paper_url: "",
     license_url: "",
     url: "https://replicate.com/google/veo-3-fast",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "google",
+    name: "imagen-4",
+    description: "Google's Imagen 4 flagship model",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/google/imagen-4",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "google",
+    name: "imagen-4-fast",
+    description:
+      "Use this fast version of Imagen 4 when speed and cost are more important than quality",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/google/imagen-4-fast",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "google",
+    name: "imagen-4-ultra",
+    description:
+      "Use this ultra version of Imagen 4 when quality matters more than speed and cost",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/google/imagen-4-ultra",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "minimax",
+    name: "video-01",
+    description: "Generate 6s videos with prompts or images (Hailuo)",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/minimax/video-01",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "recraft-ai",
+    name: "recraft-v3",
+    description:
+      "Recraft V3 (red_panda) text-to-image model with long text generation",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/recraft-ai/recraft-v3",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "ideogram-ai",
+    name: "ideogram-v3-turbo",
+    description:
+      "Fastest and cheapest Ideogram v3 - stunning realism and creative designs",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/ideogram-ai/ideogram-v3-turbo",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "ideogram-ai",
+    name: "ideogram-v3-balanced",
+    description:
+      "Balance speed, quality and cost - stunning realism and creative designs",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/ideogram-ai/ideogram-v3-balanced",
+    latest_version: {
+      id: "",
+      created_at: new Date().toISOString(),
+      cog_version: "",
+      openapi_schema: undefined,
+    },
+  },
+  {
+    owner: "ideogram-ai",
+    name: "ideogram-v3-quality",
+    description:
+      "Highest quality Ideogram v3 - stunning realism and creative designs",
+    visibility: "public",
+    run_count: 0,
+    cover_image_url: "",
+    github_url: "",
+    paper_url: "",
+    license_url: "",
+    url: "https://replicate.com/ideogram-ai/ideogram-v3-quality",
     latest_version: {
       id: "",
       created_at: new Date().toISOString(),
@@ -364,5 +533,9 @@ export const getModelDisplayName = (model: ReplicateModel): string => {
   return model.name
     .replace(/^flux-/, "")
     .replace(/^gen4-/, "")
-    .replace(/^veo-/, "");
+    .replace(/^veo-/, "")
+    .replace(/^imagen-/, "")
+    .replace(/^ideogram-/, "")
+    .replace(/^video-/, "")
+    .replace(/^recraft-/, "");
 };

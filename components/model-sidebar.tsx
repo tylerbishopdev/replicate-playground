@@ -48,7 +48,7 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
     return (
         <div
             className={cn(
-                'absolute left-0 top-0 h-full bg-background/50 border-r border-black/40 transition-all duration-300 z-40',
+                'absolute left-0 top-0 h-auto bg-background/70 border-r border-background/40 transition-all duration-300 z-40',
                 isCollapsed ? 'w-12' : 'w-80',
                 className
             )}

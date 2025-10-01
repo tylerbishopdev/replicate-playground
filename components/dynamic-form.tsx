@@ -91,7 +91,7 @@ export function DynamicForm({
             type="text"
             placeholder={field.description}
             disabled={isSubmitting}
-            className={error ? "border-destructive" : ""}
+            className={error ? "border-primary" : ""}
           />
         );
 
@@ -113,7 +113,7 @@ export function DynamicForm({
             step="any"
             placeholder={field.description}
             disabled={isSubmitting}
-            className={error ? "border-destructive" : ""}
+            className={error ? "border-primary" : ""}
           />
         );
 
@@ -133,7 +133,7 @@ export function DynamicForm({
       case 'select':
         return (
           <Select onValueChange={(value) => setValue(field.name, value)} disabled={isSubmitting}>
-            <SelectTrigger className={error ? "border-destructive" : ""}>
+            <SelectTrigger className={error ? "border-primary" : ""}>
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -217,7 +217,7 @@ export function DynamicForm({
               type="url"
               placeholder="Or paste a URL"
               disabled={isSubmitting || isUploading}
-              className={error ? "border-destructive" : ""}
+              className={error ? "border-primary" : ""}
             />
           </div>
         );
@@ -249,7 +249,7 @@ export function DynamicForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn('space-y-4', className)}
+      className={cn('space-y-4 bg-gradient-to-tr from-accent/10 via-primary/15 to-primary/15 p-3 rounded-md', className)}
     >
       {fields.map((field) => (
         <div key={field.name} className="space-y-2">
