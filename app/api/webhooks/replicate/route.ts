@@ -3,26 +3,21 @@
  * Handles webhook events from Replicate
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { validateWebhookSignature } from '@/lib/replicate';
-import { WebhookPayloadSchema } from '@/lib/types';
-
-// Store for server-sent events
-const predictionUpdates = new Map<string, any[]>();
+import { NextRequest, NextResponse } from "next/server";
+import { validateWebhookSignature } from "@/lib/replicate";
+import { WebhookPayloadSchema } from "@/lib/types";
+import { predictionUpdates } from "@/lib/prediction-store";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
-    const signature = request.headers.get('webhook-signature') || '';
-    const secret = process.env.WEBHOOK_SECRET || '';
+    const signature = request.headers.get("webhook-signature") || "";
+    const secret = process.env.WEBHOOK_SECRET || "";
 
     // Validate webhook signature if secret is configured
     if (secret && !validateWebhookSignature(body, signature, secret)) {
-      console.error('Invalid webhook signature');
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 401 }
-      );
+      console.error("Invalid webhook signature");
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
     // Parse and validate webhook payload
@@ -53,25 +48,25 @@ export async function POST(request: NextRequest) {
       }
     }, 5 * 60 * 1000);
 
-    console.log(`Webhook received for prediction ${validated.id}:`, validated.status);
+    console.log(
+      `Webhook received for prediction ${validated.id}:`,
+      validated.status
+    );
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    console.error('Error in webhook handler:', error);
+    console.error("Error in webhook handler:", error);
 
-    if (error.name === 'ZodError') {
+    if (error.name === "ZodError") {
       return NextResponse.json(
-        { error: 'Invalid webhook payload', details: error.errors },
+        { error: "Invalid webhook payload", details: error.errors },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Failed to process webhook' },
+      { error: "Failed to process webhook" },
       { status: 500 }
     );
   }
 }
-
-// Export the updates store for SSE endpoint
-export { predictionUpdates };

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ReplicateModel } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Eye, Github, FileText, Play } from 'lucide-react';
+import { Github, FileText, Play } from 'lucide-react';
 
 interface ModelCardProps {
   model: ReplicateModel;

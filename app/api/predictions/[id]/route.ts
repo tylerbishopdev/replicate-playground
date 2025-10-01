@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getPrediction, cancelPrediction } from '@/lib/replicate';
+import { formatPredictionForClient } from '@/lib/replicate-utils';
 
 export async function GET(
   request: NextRequest,
@@ -14,7 +15,10 @@ export async function GET(
     const { id } = await params;
     const prediction = await getPrediction(id);
 
-    return NextResponse.json(prediction);
+    // Format the prediction output for client
+    const formatted = formatPredictionForClient(prediction);
+
+    return NextResponse.json(formatted);
   } catch (error) {
     console.error('Error in GET /api/predictions/[id]:', error);
     return NextResponse.json(

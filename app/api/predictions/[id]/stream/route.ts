@@ -3,8 +3,9 @@
  * Server-sent events endpoint for real-time prediction updates
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { predictionUpdates } from '@/app/api/webhooks/replicate/route';
+import { NextRequest, NextResponse } from "next/server";
+import { predictionUpdates } from "@/lib/prediction-store";
+import { formatPredictionForClient } from "@/lib/replicate-utils";
 
 export async function GET(
   request: NextRequest,
@@ -14,9 +15,9 @@ export async function GET(
 
   // Set up SSE headers
   const headers = new Headers({
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
   });
 
   // Create a readable stream for SSE
@@ -33,7 +34,9 @@ export async function GET(
           lastUpdateIndex = updates.length;
 
           newUpdates.forEach((update) => {
-            const data = `data: ${JSON.stringify(update.data)}\n\n`;
+            // Format the prediction data for client
+            const formattedData = formatPredictionForClient(update.data);
+            const data = `data: ${JSON.stringify(formattedData)}\n\n`;
             controller.enqueue(new TextEncoder().encode(data));
           });
 
@@ -41,7 +44,7 @@ export async function GET(
           const lastUpdate = updates[updates.length - 1];
           if (
             lastUpdate &&
-            ['succeeded', 'failed', 'canceled'].includes(lastUpdate.data.status)
+            ["succeeded", "failed", "canceled"].includes(lastUpdate.data.status)
           ) {
             clearInterval(interval);
             controller.close();
@@ -50,7 +53,7 @@ export async function GET(
       }, 1000);
 
       // Clean up on disconnect
-      request.signal.addEventListener('abort', () => {
+      request.signal.addEventListener("abort", () => {
         clearInterval(interval);
         controller.close();
       });

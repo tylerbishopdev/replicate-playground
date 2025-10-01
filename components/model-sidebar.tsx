@@ -48,22 +48,22 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
     return (
         <div
             className={cn(
-                'fixed left-0 top-0 h-full bg-card border-r border-border transition-all duration-300 z-40',
+                'absolute left-0 top-0 h-full bg-background/50 border-r border-black/40 transition-all duration-300 z-40',
                 isCollapsed ? 'w-12' : 'w-80',
                 className
             )}
         >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
+            <div className="flex items-center justify-between p-4 ">
                 {!isCollapsed && (
                     <>
-                        <h2 className="text-lg font-semibold text-foreground">Models</h2>
+                        <h2 className="text-7xl font-black tracking-tight text-accent/50">Models</h2>
                         <button
                             onClick={() => setIsCollapsed(true)}
-                            className="p-1 rounded-md hover:bg-accent"
+                            className="p-1  hover:bg-accent"
                             title="Collapse sidebar"
                         >
-                            <ChevronLeft className="h-4 w-4" />
+                            <ChevronLeft className="h-4 w-4 text-black/50 bg-accent/20 rounded-full" />
                         </button>
                     </>
                 )}
@@ -71,10 +71,10 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
                 {isCollapsed && (
                     <button
                         onClick={() => setIsCollapsed(false)}
-                        className="p-1 rounded-md hover:bg-accent mx-auto"
+                        className="p-1  hover:bg-accent mx-auto"
                         title="Expand sidebar"
                     >
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="h-4 w-4  " />
                     </button>
                 )}
             </div>
@@ -84,18 +84,18 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
                     {/* Search */}
                     <div className="p-4 border-b border-border">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary bg-accent/30 rounded-full p-1" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search models..."
-                                className="w-full rounded-lg border border-input bg-background pl-10 pr-8 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                className="w-full  bg-primary/5 border-accent/30 border pl-10 pr-8 py-2 text-xs focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-accent"
                             />
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-q"
                                 >
                                     <X className="h-4 w-4" />
                                 </button>
@@ -110,10 +110,10 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
                                 <div key={owner} className="mb-4">
                                     {/* Owner Group Header */}
                                     <div className="flex items-center gap-2 px-2 py-1 mb-2">
-                                        <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                        <h3 className="text-xs font-medium text-accent uppercase tracking-wider">
                                             {owner}
                                         </h3>
-                                        <div className="flex-1 h-px bg-border" />
+                                        <div className="flex-1 h-px bg-primary/30" />
                                     </div>
 
                                     {/* Models in Group */}
@@ -127,17 +127,17 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
                                                     key={`${model.owner}/${model.name}`}
                                                     href={`/models/${model.owner}/${model.name}`}
                                                     className={cn(
-                                                        'group flex items-center gap-3 rounded-lg p-2 text-sm transition-colors',
+                                                        'group flex items-center gap-3  p-2 text-sm transition-colors',
                                                         isActive
-                                                            ? 'bg-primary text-primary-foreground'
-                                                            : 'hover:bg-accent hover:text-accent-foreground'
+                                                            ? 'bg-primary/30 text-primary'
+                                                            : 'hover:bg-accent/30 hover:text-foreground'
                                                     )}
                                                 >
                                                     {/* Model Icon/Indicator */}
                                                     <div
                                                         className={cn(
-                                                            'h-2 w-2 rounded-full flex-shrink-0',
-                                                            isActive ? 'bg-primary-foreground' : 'bg-muted-foreground/50'
+                                                            'h-1 w-1 rounded-full flex-shrink-0',
+                                                            isActive ? 'bg-primary' : 'bg-muted-foreground/80'
                                                         )}
                                                     />
 
@@ -145,8 +145,8 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
                                                     <div className="flex-1 min-w-0">
                                                         <div
                                                             className={cn(
-                                                                'font-medium truncate',
-                                                                isActive ? 'text-primary-foreground' : 'text-foreground'
+                                                                'font-bold truncate',
+                                                                isActive ? 'text-primary' : 'text-foreground'
                                                             )}
                                                             title={model.name}
                                                         >
@@ -157,8 +157,8 @@ export function ModelSidebar({ className }: ModelSidebarProps) {
                                                                 className={cn(
                                                                     'text-xs truncate',
                                                                     isActive
-                                                                        ? 'text-primary-foreground/70'
-                                                                        : 'text-muted-foreground'
+                                                                        ? 'text-primary/90'
+                                                                        : 'text-foreground/80 '
                                                                 )}
                                                                 title={model.description}
                                                             >

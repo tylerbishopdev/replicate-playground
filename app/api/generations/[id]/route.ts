@@ -3,20 +3,21 @@
  * Handles operations for specific generation records
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 // GET /api/generations/[id] - Get specific generation
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const generation = await db.getGeneration(params.id);
+    const { id } = await params;
+    const generation = await db.getGeneration(id);
 
     if (!generation) {
       return NextResponse.json(
-        { success: false, error: 'Generation not found' },
+        { success: false, error: "Generation not found" },
         { status: 404 }
       );
     }
@@ -26,9 +27,9 @@ export async function GET(
       data: generation,
     });
   } catch (error) {
-    console.error('Failed to get generation:', error);
+    console.error("Failed to get generation:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to get generation' },
+      { success: false, error: "Failed to get generation" },
       { status: 500 }
     );
   }
@@ -37,11 +38,20 @@ export async function GET(
 // PATCH /api/generations/[id] - Update generation
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
-    const { status, output, imageUrls, blobUrls, error, completedAt, duration } = body;
+    const {
+      status,
+      output,
+      imageUrls,
+      blobUrls,
+      error,
+      completedAt,
+      duration,
+    } = body;
 
     const updateData: any = {};
     if (status) updateData.status = status;
@@ -52,16 +62,16 @@ export async function PATCH(
     if (completedAt) updateData.completedAt = new Date(completedAt);
     if (duration) updateData.duration = duration;
 
-    const generation = await db.updateGeneration(params.id, updateData);
+    const generation = await db.updateGeneration(id, updateData);
 
     return NextResponse.json({
       success: true,
       data: generation,
     });
   } catch (error) {
-    console.error('Failed to update generation:', error);
+    console.error("Failed to update generation:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update generation' },
+      { success: false, error: "Failed to update generation" },
       { status: 500 }
     );
   }

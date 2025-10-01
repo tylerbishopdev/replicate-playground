@@ -6,11 +6,11 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useForm, FieldValues } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { FormField } from '@/lib/types';
-import { cn, formatFileSize } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Upload, X, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 interface DynamicFormProps {
   fields: FormField[];
-  onSubmit: (values: Record<string, any>) => void;
+  onSubmit: (values: Record<string, unknown>) => void;
   isSubmitting?: boolean;
   className?: string;
 }
@@ -44,7 +44,6 @@ export function DynamicForm({
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
   } = useForm({
     resolver: zodResolver(schema as any),
     defaultValues: getDefaultValues(fields),
@@ -71,9 +70,10 @@ export function DynamicForm({
       const data = await response.json();
       setFileUrls((prev) => ({ ...prev, [field.name]: data.url }));
       setValue(field.name, data.url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Upload error:', error);
-      alert(`Failed to upload file: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+      alert(`Failed to upload file: ${errorMessage}`);
     } finally {
       setUploadingFiles((prev) => ({ ...prev, [field.name]: false }));
     }
@@ -98,7 +98,15 @@ export function DynamicForm({
       case 'number':
         return (
           <Input
-            {...register(field.name, { valueAsNumber: true })}
+            {...register(field.name, {
+              setValueAs: (value) => {
+                if (value === '' || value === null || value === undefined) {
+                  return undefined;
+                }
+                const num = Number(value);
+                return isNaN(num) ? undefined : num;
+              }
+            })}
             type="number"
             min={field.min}
             max={field.max}
@@ -292,9 +300,23 @@ function generateZodSchema(fields: FormField[]): z.ZodSchema<Record<string, any>
 
     switch (field.type) {
       case 'number':
-        schema = z.number();
-        if (field.min !== undefined) schema = (schema as z.ZodNumber).min(field.min);
-        if (field.max !== undefined) schema = (schema as z.ZodNumber).max(field.max);
+        // Handle number fields properly - allow empty strings for optional fields
+        if (field.required) {
+          schema = z.number();
+        } else {
+          schema = z.union([
+            z.number(),
+            z.string().length(0).transform(() => undefined),
+            z.literal("").transform(() => undefined),
+            z.undefined()
+          ]);
+        }
+        if (field.min !== undefined && field.required) {
+          schema = (schema as z.ZodNumber).min(field.min);
+        }
+        if (field.max !== undefined && field.required) {
+          schema = (schema as z.ZodNumber).max(field.max);
+        }
         break;
 
       case 'boolean':
@@ -343,8 +365,8 @@ function generateZodSchema(fields: FormField[]): z.ZodSchema<Record<string, any>
   return z.object(shape);
 }
 
-function getDefaultValues(fields: FormField[]): Record<string, any> {
-  const defaults: Record<string, any> = {};
+function getDefaultValues(fields: FormField[]): Record<string, unknown> {
+  const defaults: Record<string, unknown> = {};
 
   fields.forEach((field) => {
     if (field.defaultValue !== undefined) {

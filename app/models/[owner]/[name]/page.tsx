@@ -16,21 +16,22 @@ import {
   Github,
   FileText,
   Settings,
-  Loader2,
   AlertCircle
 } from 'lucide-react';
 
 import { DynamicForm } from '@/components/dynamic-form';
 import { PredictionOutput } from '@/components/prediction-output';
 import { ModelSidebar } from '@/components/model-sidebar';
+import { HolographicLoader } from '@/components/ui/holographic-loader';
 import { ReplicateModel, ModelVersion, Prediction, FormField } from '@/lib/types';
-import { parseOpenAPISchema, prepareInput } from '@/lib/schema-parser';
+import { parseOpenAPISchemaWithModelConfig, prepareInput } from '@/lib/schema-parser';
 import { cn } from '@/lib/utils';
-import { useCreateGeneration, useGenerations } from '@/hooks/use-generations';
+import { useGenerations } from '@/hooks/use-generations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+// Removed unused imports
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -44,21 +45,17 @@ export default function ModelDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [enableStreaming, setEnableStreaming] = useState(false);
   const [formFields, setFormFields] = useState<FormField[]>([]);
-  // Track current generation for updates
-  const [, setCurrentGeneration] = useState<{ id: string } | null>(null);
-
   // Generation hooks
-  const { create: createGeneration } = useCreateGeneration();
-  const { generations, refresh: refreshGenerations } = useGenerations(owner, name);
+  const { generations } = useGenerations(owner, name);
 
   // Fetch model data
-  const { data: model, error: modelError } = useSWR<ReplicateModel>(
+  const { data: model, error: modelError, isLoading: modelLoading } = useSWR<ReplicateModel>(
     `/api/models/${owner}/${name}`,
     fetcher
   );
 
   // Fetch model version (latest)
-  const { data: version, error: versionError } = useSWR<ModelVersion>(
+  const { data: version, error: versionError, isLoading: versionLoading } = useSWR<ModelVersion>(
     model?.latest_version?.id
       ? `/api/models/${owner}/${name}/versions/${model.latest_version.id}`
       : null,
@@ -68,10 +65,10 @@ export default function ModelDetailPage() {
   // Parse OpenAPI schema when version loads
   useEffect(() => {
     if (version?.openapi_schema) {
-      const fields = parseOpenAPISchema(version.openapi_schema);
+      const fields = parseOpenAPISchemaWithModelConfig(version.openapi_schema, owner, name);
       setFormFields(fields);
     }
-  }, [version]);
+  }, [version, owner, name]);
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
@@ -80,69 +77,54 @@ export default function ModelDetailPage() {
     setIsSubmitting(true);
     try {
       const input = prepareInput(formData, formFields);
+      console.log('Form data prepared:', input);
 
-      // Create generation record in database first
-      const generation = await createGeneration({
-        modelOwner: owner,
-        modelName: name,
-        modelVersion: version.id,
-        prompt: input.prompt || formData.prompt || JSON.stringify(input),
-        parameters: input,
-      });
+      // Get the correct model ID - use owner/name format that Replicate expects
+      const modelId = `${owner}/${name}`;
 
-      setCurrentGeneration(generation);
+      console.log('Submitting to model:', modelId);
 
       const response = await fetch('/api/predictions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          version: version.id,
+          version: modelId,
           input,
           stream: enableStreaming,
-          webhook: `${process.env.NEXT_PUBLIC_APP_URL}/api/generations/webhook`,
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
+        console.error('API Error:', error);
         throw new Error(error.error || 'Failed to create prediction');
       }
 
       const newPrediction = await response.json();
+      console.log('Prediction created:', newPrediction);
       setPrediction(newPrediction);
 
-      // Update generation with Replicate ID
-      await fetch(`/api/generations/${generation.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          replicateId: newPrediction.id,
-          status: 'STARTING',
-        }),
-      });
+      // Poll for updates instead of using SSE for simplicity
+      const pollPrediction = async () => {
+        try {
+          const statusResponse = await fetch(`/api/predictions/${newPrediction.id}`);
+          if (statusResponse.ok) {
+            const updatedPrediction = await statusResponse.json();
+            setPrediction(updatedPrediction);
 
-      // Set up SSE for real-time updates if not streaming
-      if (!enableStreaming) {
-        const eventSource = new EventSource(
-          `/api/predictions/${newPrediction.id}/stream`
-        );
-
-        eventSource.onmessage = (event) => {
-          const update = JSON.parse(event.data);
-          setPrediction((prev) => ({ ...prev, ...update }));
-
-          // Close connection when prediction is done
-          if (['succeeded', 'failed', 'canceled'].includes(update.status)) {
-            eventSource.close();
-            // Refresh generations list
-            refreshGenerations();
+            // Continue polling if not finished
+            if (!['succeeded', 'failed', 'canceled'].includes(updatedPrediction.status)) {
+              setTimeout(pollPrediction, 1000);
+            }
           }
-        };
+        } catch (error) {
+          console.error('Error polling prediction:', error);
+        }
+      };
 
-        eventSource.onerror = () => {
-          eventSource.close();
-        };
-      }
+      // Start polling
+      setTimeout(pollPrediction, 1000);
+
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Prediction error:', error);
@@ -175,10 +157,18 @@ export default function ModelDetailPage() {
     );
   }
 
+  if (modelLoading || (model && !version && !versionError)) {
+    return (
+      <div className="h-screen w-full object-fill flex items-center justify-center">
+        <HolographicLoader />
+      </div>
+    );
+  }
+
   if (!model || !version) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="h-screen w-full object-fill flex items-center justify-center">
+        <HolographicLoader />
       </div>
     );
   }
@@ -191,7 +181,7 @@ export default function ModelDetailPage() {
       {/* Main Content - Adjusted for sidebar */}
       <div className="flex-1 ml-12 lg:ml-80 transition-all duration-300">
         {/* Header */}
-        <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header>
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4">
               <Link

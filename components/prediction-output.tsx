@@ -5,12 +5,13 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Prediction, PredictionStatus } from '@/lib/types';
 import { cn, getMediaType, formatDuration } from '@/lib/utils';
+
 import {
-  Loader2,
+  Atom,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -20,6 +21,10 @@ import {
   EyeOff,
   Terminal,
 } from 'lucide-react';
+
+
+// Type definition for prediction output that covers common use cases
+type PredictionOutputItem = string | number | boolean | object | null;
 
 interface PredictionOutputProps {
   prediction: Prediction;
@@ -51,31 +56,35 @@ export function PredictionOutput({
   };
 
   const renderStatus = () => {
-    const statusConfig: Record<PredictionStatus, { icon: React.ReactNode; color: string; text: string }> = {
+    const statusConfig: Record<PredictionStatus, {
+      icon: React.ReactNode;
+      text: string;
+      color: string;
+    }> = {
       starting: {
-        icon: <Loader2 className="h-4 w-4 animate-spin" />,
+        icon: <Atom className="h-12 w-12 animate-spin" />,
+        text: 'Starting',
         color: 'text-primary',
-        text: 'Starting...',
       },
       processing: {
-        icon: <Loader2 className="h-4 w-4 animate-spin" />,
+        icon: <Atom className="h-12 w-12 animate-spin" />,
+        text: 'Processing',
         color: 'text-primary',
-        text: 'Processing...',
       },
       succeeded: {
         icon: <CheckCircle className="h-4 w-4" />,
-        color: 'text-green-600',
-        text: 'Completed',
+        text: 'Succeeded',
+        color: 'text-primary',
       },
       failed: {
         icon: <XCircle className="h-4 w-4" />,
-        color: 'text-destructive',
         text: 'Failed',
+        color: 'text-primary',
       },
       canceled: {
         icon: <AlertCircle className="h-4 w-4" />,
-        color: 'text-gray-600',
         text: 'Canceled',
+        color: 'text-primary',
       },
     };
 
@@ -116,7 +125,7 @@ export function PredictionOutput({
     return renderSingleOutput(prediction.output, 'output');
   };
 
-  const renderSingleOutput = (output: any, key: string) => {
+  const renderSingleOutput = (output: PredictionOutputItem, key?: string) => {
     // Handle string URLs
     if (typeof output === 'string' && output.startsWith('http')) {
       const mediaType = getMediaType(output);

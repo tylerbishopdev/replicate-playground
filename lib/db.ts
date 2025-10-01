@@ -3,7 +3,7 @@
  * Provides Prisma client instance and database operations
  */
 
-import { PrismaClient } from './generated/prisma';
+import { PrismaClient } from "./generated/prisma";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -12,10 +12,10 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: ['query'],
+    log: ["query"],
   });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // Generation-related database operations
 export const db = {
@@ -31,22 +31,32 @@ export const db = {
     return prisma.generation.create({
       data: {
         ...data,
-        status: 'PENDING',
+        status: "PENDING",
         startedAt: new Date(),
       },
     });
   },
 
   // Update generation status
-  updateGeneration: async (id: string, data: {
-    status?: 'PENDING' | 'STARTING' | 'PROCESSING' | 'SUCCEEDED' | 'FAILED' | 'CANCELED';
-    output?: any;
-    imageUrls?: string[];
-    blobUrls?: string[];
-    error?: string;
-    completedAt?: Date;
-    duration?: number;
-  }) => {
+  updateGeneration: async (
+    id: string,
+    data: {
+      replicateId?: string;
+      status?:
+        | "PENDING"
+        | "STARTING"
+        | "PROCESSING"
+        | "SUCCEEDED"
+        | "FAILED"
+        | "CANCELED";
+      output?: any;
+      imageUrls?: string[];
+      blobUrls?: string[];
+      error?: string;
+      completedAt?: Date;
+      duration?: number;
+    }
+  ) => {
     return prisma.generation.update({
       where: { id },
       data,
@@ -54,15 +64,24 @@ export const db = {
   },
 
   // Update generation by Replicate ID
-  updateGenerationByReplicateId: async (replicateId: string, data: {
-    status?: 'PENDING' | 'STARTING' | 'PROCESSING' | 'SUCCEEDED' | 'FAILED' | 'CANCELED';
-    output?: any;
-    imageUrls?: string[];
-    blobUrls?: string[];
-    error?: string;
-    completedAt?: Date;
-    duration?: number;
-  }) => {
+  updateGenerationByReplicateId: async (
+    replicateId: string,
+    data: {
+      status?:
+        | "PENDING"
+        | "STARTING"
+        | "PROCESSING"
+        | "SUCCEEDED"
+        | "FAILED"
+        | "CANCELED";
+      output?: any;
+      imageUrls?: string[];
+      blobUrls?: string[];
+      error?: string;
+      completedAt?: Date;
+      duration?: number;
+    }
+  ) => {
     return prisma.generation.update({
       where: { replicateId },
       data,
@@ -91,7 +110,7 @@ export const db = {
         modelName,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
   },
@@ -100,7 +119,7 @@ export const db = {
   getRecentGenerations: async (limit = 10) => {
     return prisma.generation.findMany({
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       take: limit,
     });
@@ -110,16 +129,16 @@ export const db = {
   getGenerationStats: async () => {
     const total = await prisma.generation.count();
     const successful = await prisma.generation.count({
-      where: { status: 'SUCCEEDED' },
+      where: { status: "SUCCEEDED" },
     });
     const failed = await prisma.generation.count({
-      where: { status: 'FAILED' },
+      where: { status: "FAILED" },
     });
     const pending = await prisma.generation.count({
       where: {
         status: {
-          in: ['PENDING', 'STARTING', 'PROCESSING']
-        }
+          in: ["PENDING", "STARTING", "PROCESSING"],
+        },
       },
     });
 
