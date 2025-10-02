@@ -119,7 +119,7 @@ export function DynamicForm({
 
       case 'boolean':
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 ">
             <Checkbox
               {...register(field.name)}
               disabled={isSubmitting}
@@ -133,7 +133,7 @@ export function DynamicForm({
       case 'select':
         return (
           <Select onValueChange={(value) => setValue(field.name, value)} disabled={isSubmitting}>
-            <SelectTrigger className={error ? "border-primary" : ""}>
+            <SelectTrigger className={error ? "border-primary " : ""}>
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -148,7 +148,7 @@ export function DynamicForm({
 
       case 'file':
         return (
-          <div className="space-y-2">
+          <div className="space-y-2 ">
             <input
               ref={(el) => {
                 if (el) fileInputRefs.current[field.name] = el;
@@ -166,13 +166,12 @@ export function DynamicForm({
             />
 
             {fileUrls[field.name] ? (
-              <div className="flex items-center justify-between rounded-md border border-input bg-background px-3 py-2">
+              <div className="flex items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2">
                 <span className="text-sm truncate">
                   {fileUrls[field.name]}
                 </span>
                 <Button
                   type="button"
-                  variant="ghost"
                   size="sm"
                   onClick={() => {
                     setFileUrls((prev) => {
@@ -182,7 +181,7 @@ export function DynamicForm({
                     });
                     setValue(field.name, '');
                   }}
-                  className="h-auto p-1 hover:text-destructive"
+                  className="h-auto p-1 hover:text-destructive  bg-background/50"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -190,7 +189,7 @@ export function DynamicForm({
             ) : (
               <Button
                 type="button"
-                variant="outline"
+
                 onClick={() => fileInputRefs.current[field.name]?.click()}
                 disabled={isSubmitting || isUploading}
                 className={cn(
@@ -259,7 +258,7 @@ export function DynamicForm({
           </Label>
 
           {field.description && (
-            <p className="text-xs text-muted-foreground">{field.description}</p>
+            <p className="text-[9px] font-tiposka text-muted/50">{field.description}</p>
           )}
 
           {renderField(field)}

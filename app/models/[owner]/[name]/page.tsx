@@ -249,7 +249,7 @@ export default function ModelDetailPage() {
 
                   {model.run_count && (
                     <span className="flex items-center gap-1 text-foreground">
-                      <Play className="h-4 w-4" />
+                      <Play className="h-2 w-2" />
                       {model.run_count.toLocaleString()} runs
                     </span>
                   )}
@@ -306,8 +306,8 @@ export default function ModelDetailPage() {
               {activeTab === 'run' && (
                 <Card>
                   <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle>Input Parameters</CardTitle>
+                    <div className="flex items-center justify-between font-tiposka">
+                      <CardTitle className="font-tiposka text-md">Input Parameters</CardTitle>
                       {/* Streaming Toggle */}
                       <div className="flex items-center space-x-2">
                         <Settings className="h-4 w-4 text-foreground" />

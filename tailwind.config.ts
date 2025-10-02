@@ -10,10 +10,11 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Satoshi", "system-ui", "sans-serif"],
-        mono: ["Tiposka", "Monaco", "Consolas", "monospace"],
-        diatype: ["Diatype", "system-ui", "sans-serif"],
-        satoshi: ["Satoshi", "system-ui", "sans-serif"],
+        sans: ["var(--font-satoshi)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "Monaco", "Consolas", "monospace"],
+        diatype: ["var(--font-diatype)", "system-ui", "sans-serif"],
+        satoshi: ["var(--font-satoshi)", "system-ui", "sans-serif"],
+        tiposka: ["var(--font-tiposka)", "system-ui", "sans-serif"],
       },
       colors: {
         background: "hsl(var(--background))",
